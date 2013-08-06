@@ -10,11 +10,5 @@
     <iconUrl>https://raw.github.com/kazimanzurrashid/Community.Owin.Security/master/media/GitHub-Mark-32px.png</iconUrl>
     <description>$description$</description>
     <tags>OWIN GitHub OAuth2 OAuth Security</tags>
-    <dependencies>
-      <dependency id="Owin" version="1.0"/>
-      <dependency id="Microsoft.Owin" version="$version$"/>
-      <dependency id="Microsoft.Owin.Security" version="$version$"/>
-      <dependency id="Newtonsoft.Json" version="5.0.6"/>
-    </dependencies>
   </metadata>
 </package>
