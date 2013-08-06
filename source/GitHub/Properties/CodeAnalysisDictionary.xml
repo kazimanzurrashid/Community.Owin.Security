@@ -1,0 +1,12 @@
+﻿<Dictionary>
+  <Words>
+    <Recognized>
+      <Word>Git</Word>
+      <Word>GitHub</Word>
+      <Word>Owin</Word>
+    </Recognized>
+    <DiscreteExceptions>
+      <Term>GitHub</Term>
+    </DiscreteExceptions>
+  </Words>
+</Dictionary>
