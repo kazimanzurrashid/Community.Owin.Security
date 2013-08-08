@@ -1,4 +1,4 @@
-﻿namespace Community.Owin.Security.GitHub
+﻿namespace Community.Owin.Security
 {
     using System;
 
@@ -10,29 +10,28 @@
 
     using global::Owin;
 
-    public class GitHubAuthenticationMiddleware :
-        AuthenticationMiddleware<GitHubAuthenticationOptions>
+    public class OAuth2AuthenticationMiddleware<THandler> :
+        AuthenticationMiddleware<OAuth2AuthenticationOptions>
+        where THandler : OAuth2AuthenticationHandler, new()
     {
-        private static readonly string MiddlewareFullName =
-            typeof(GitHubAuthenticationMiddleware).FullName;
- 
         private readonly ILogger logger;
 
-        public GitHubAuthenticationMiddleware(
+        public OAuth2AuthenticationMiddleware(
             OwinMiddleware next,
             IAppBuilder app,
-            GitHubAuthenticationOptions options) : base(next, options)
+            OAuth2AuthenticationOptions options)
+            : base(next, options)
         {
             if (app == null)
             {
                 throw new ArgumentNullException("app");
             }
 
-            logger = app.CreateLogger<GitHubAuthenticationMiddleware>();
+            logger = app.CreateLogger<OAuth2AuthenticationMiddleware<THandler>>();
 
             if (Options.Provider == null)
             {
-                Options.Provider = new GitHubAuthenticationProvider();
+                Options.Provider = new OAuth2AuthenticationProvider();
             }
 
             if (Options.StateDataHandler != null)
@@ -40,14 +39,19 @@
                 return;
             }
 
-            var fullName = new[] { MiddlewareFullName, Options.AuthenticationType };
+            var fullName = new[]
+            {
+                typeof(OAuth2AuthenticationMiddleware<THandler>).FullName,
+                Options.AuthenticationType
+            };
+
             var dataProtector = app.CreateDataProtecter(fullName);
             Options.StateDataHandler = new ExtraDataHandler(dataProtector);
         }
 
-        protected override AuthenticationHandler<GitHubAuthenticationOptions> CreateHandler()
+        protected override AuthenticationHandler<OAuth2AuthenticationOptions> CreateHandler()
         {
-            return new GitHubAuthenticationHandler(logger);
+            return new THandler { Logger = logger };
         }
     }
 }

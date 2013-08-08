@@ -1,12 +1,15 @@
 ﻿<Dictionary>
   <Words>
     <Recognized>
+      <Word>Auth</Word>
       <Word>Git</Word>
       <Word>GitHub</Word>
       <Word>Owin</Word>
+      <Word>StackExchange</Word>
     </Recognized>
     <DiscreteExceptions>
       <Term>GitHub</Term>
+      <Term>StackExchange</Term>
     </DiscreteExceptions>
   </Words>
 </Dictionary>

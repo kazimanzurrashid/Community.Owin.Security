@@ -1,11 +1,11 @@
-﻿namespace Community.Owin.Security.GitHub
+﻿namespace Community.Owin.Security
 {
     using System;
     using System.Threading.Tasks;
 
-    public class GitHubAuthenticationProvider : IGitHubAuthenticationProvider
+    public class OAuth2AuthenticationProvider : IOAuth2AuthenticationProvider
     {
-        public GitHubAuthenticationProvider()
+        public OAuth2AuthenticationProvider()
         {
             #pragma warning disable 1998
             OnAuthenticated = async context => { };
@@ -13,22 +13,22 @@
             #pragma warning restore 1998
         }
 
-        public Func<GitHubAuthenticatedContext, Task> OnAuthenticated
+        public Func<OAuth2AuthenticatedContext, Task> OnAuthenticated
         {
             get; set;
         }
 
-        public Func<GitHubReturnEndpointContext, Task> OnReturnEndpoint
+        public Func<OAuth2ReturnEndpointContext, Task> OnReturnEndpoint
         {
             get; set;
         }
 
-        public virtual Task Authenticated(GitHubAuthenticatedContext context)
+        public virtual Task Authenticated(OAuth2AuthenticatedContext context)
         {
             return OnAuthenticated(context);
         }
 
-        public virtual Task ReturnEndpoint(GitHubReturnEndpointContext context)
+        public virtual Task ReturnEndpoint(OAuth2ReturnEndpointContext context)
         {
             return OnReturnEndpoint(context);
         }

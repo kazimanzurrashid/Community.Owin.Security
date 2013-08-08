@@ -1,13 +1,13 @@
-﻿namespace Community.Owin.Security.GitHub
+﻿namespace Community.Owin.Security
 {
     using System.Collections.Generic;
 
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Provider;
 
-    public class GitHubReturnEndpointContext : ReturnEndpointContext
+    public class OAuth2ReturnEndpointContext : ReturnEndpointContext
     {
-        public GitHubReturnEndpointContext(
+        public OAuth2ReturnEndpointContext(
             IDictionary<string, object> environment,
             AuthenticationTicket ticket,
             IDictionary<string, string> errorDetails) : 

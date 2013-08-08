@@ -7,8 +7,7 @@
     <authors>$author$</authors>
     <owners>$author$</owners>
     <projectUrl>https://github.com/kazimanzurrashid/Community.Owin.Security</projectUrl>
-    <iconUrl>https://raw.github.com/kazimanzurrashid/Community.Owin.Security/master/media/GitHub-Mark-32px.png</iconUrl>
     <description>$description$</description>
-    <tags>OWIN GitHub OAuth2 OAuth Security</tags>
+    <tags>OWIN OAuth2 OAuth SignIn Login Security Social</tags>
   </metadata>
 </package>

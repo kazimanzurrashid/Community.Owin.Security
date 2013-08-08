@@ -1,4 +1,4 @@
-﻿namespace Community.Owin.Security.GitHub
+﻿namespace Community.Owin.Security
 {
     using System.Collections.Generic;
     using System.Security.Claims;
@@ -6,9 +6,9 @@
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Provider;
 
-    public class GitHubAuthenticatedContext : BaseContext
+    public class OAuth2AuthenticatedContext : BaseContext
     {
-        public GitHubAuthenticatedContext(
+        public OAuth2AuthenticatedContext(
             string accessToken,
             string userId,
             string userName,

@@ -1,12 +1,17 @@
-﻿namespace Community.Owin.Security.GitHub
+﻿namespace Community.Owin.Security
 {
     using System;
 
     using Microsoft.Owin.Security;
 
-    public class GitHubAuthenticationOptions : AuthenticationOptions
+    public class OAuth2AuthenticationOptions : AuthenticationOptions
     {
-        public GitHubAuthenticationOptions(string clientId, string clientSecret) : base("GitHub")
+        public OAuth2AuthenticationOptions(
+            string authenticationType,
+            string caption,
+            string clientId,
+            string clientSecret)
+            : base(authenticationType)
         {
             if (string.IsNullOrWhiteSpace(clientId))
             {
@@ -21,8 +26,8 @@
             ClientId = clientId;
             ClientSecret = clientSecret;
 
-            Caption = "GitHub";
-            ReturnPath = "/signin-github";
+            Caption = caption;
+            ReturnPath = "/signin-" + authenticationType;
             AuthenticationMode = AuthenticationMode.Passive;
         }
 
@@ -36,7 +41,7 @@
 
         public string SignInAsAuthenticationType { get; set; }
 
-        public IGitHubAuthenticationProvider Provider { get; set; }
+        public IOAuth2AuthenticationProvider Provider { get; set; }
 
         public ISecureDataHandler<AuthenticationExtra> StateDataHandler
         {
@@ -46,15 +51,9 @@
 
         public string Caption
         {
-            get
-            {
-                return Description.Caption;
-            }
+            get { return Description.Caption; }
 
-            set
-            {
-                Description.Caption = value;
-            }
+            set { Description.Caption = value; }
         }
     }
 }
