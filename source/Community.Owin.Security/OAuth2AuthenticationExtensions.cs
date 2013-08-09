@@ -18,9 +18,7 @@
                 throw new ArgumentNullException("app");
             }
 
-            var option = new OAuth2AuthenticationOptions(
-                "github", 
-                "GitHub",
+            var option = new GitHubAuthenticationOptions(
                 clientId,
                 clientSecret)
             {
@@ -32,10 +30,10 @@
 
         public static IAppBuilder UseGitHubAuthentication(
             this IAppBuilder app,
-            OAuth2AuthenticationOptions options)
+            GitHubAuthenticationOptions options)
         {
             return UseAuthentication(
-                typeof(OAuth2AuthenticationMiddleware<GitHubAuthenticationHandler>),
+                typeof(OAuth2AuthenticationMiddleware<GitHubAuthenticationHandler, GitHubAuthenticationOptions>),
                 app,
                 options);
         }
@@ -43,18 +41,20 @@
         public static IAppBuilder UseStackExchangeAuthentication(
             this IAppBuilder app,
             string clientId,
-            string clientSecret)
+            string clientSecret,
+            string key,
+            string site)
         {
             if (app == null)
             {
                 throw new ArgumentNullException("app");
             }
 
-            var option = new OAuth2AuthenticationOptions(
-                "stackexchange",
-                "StackExchange",
+            var option = new StackExchangeAuthenticationOptions(
                 clientId,
-                clientSecret)
+                clientSecret,
+                key,
+                site)
             {
                 SignInAsAuthenticationType = app.GetDefaultSignInAsAuthenticationType()
             };
@@ -64,10 +64,10 @@
 
         public static IAppBuilder UseStackExchangeAuthentication(
             this IAppBuilder app,
-            OAuth2AuthenticationOptions options)
+            StackExchangeAuthenticationOptions options)
         {
             return UseAuthentication(
-                typeof(OAuth2AuthenticationMiddleware<StackExchangeAuthenticationHandler>),
+                typeof(OAuth2AuthenticationMiddleware<StackExchangeAuthenticationHandler, StackExchangeAuthenticationOptions>),
                 app,
                 options);
         }

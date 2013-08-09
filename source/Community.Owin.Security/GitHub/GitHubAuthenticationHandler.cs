@@ -3,13 +3,20 @@
     using Newtonsoft.Json.Linq;
 
     public class GitHubAuthenticationHandler :
-        OAuth2AuthenticationHandler
+        OAuth2AuthenticationHandler<GitHubAuthenticationOptions>
     {
         public GitHubAuthenticationHandler() : base(
             "https://github.com/login/oauth/authorize",
-            "https://github.com/login/oauth/access_token",
-            "https://api.github.com/user")
+            "https://github.com/login/oauth/access_token")
         {
+        }
+
+        protected override string UserInfoEndpoint
+        {
+            get
+            {
+                return "https://api.github.com/user";
+            }
         }
 
         protected override OAuth2UserInfo ParseUserInfo(

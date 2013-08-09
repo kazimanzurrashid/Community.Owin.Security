@@ -10,16 +10,17 @@
 
     using global::Owin;
 
-    public class OAuth2AuthenticationMiddleware<THandler> :
-        AuthenticationMiddleware<OAuth2AuthenticationOptions>
-        where THandler : OAuth2AuthenticationHandler, new()
+    public class OAuth2AuthenticationMiddleware<THandler, TOptions> :
+        AuthenticationMiddleware<TOptions>
+        where THandler : OAuth2AuthenticationHandler<TOptions>, new()
+        where TOptions : OAuth2AuthenticationOptions
     {
         private readonly ILogger logger;
 
         public OAuth2AuthenticationMiddleware(
             OwinMiddleware next,
             IAppBuilder app,
-            OAuth2AuthenticationOptions options)
+            TOptions options)
             : base(next, options)
         {
             if (app == null)
@@ -27,7 +28,7 @@
                 throw new ArgumentNullException("app");
             }
 
-            logger = app.CreateLogger<OAuth2AuthenticationMiddleware<THandler>>();
+            logger = app.CreateLogger<OAuth2AuthenticationMiddleware<THandler, TOptions>>();
 
             if (Options.Provider == null)
             {
@@ -41,7 +42,7 @@
 
             var fullName = new[]
             {
-                typeof(OAuth2AuthenticationMiddleware<THandler>).FullName,
+                typeof(OAuth2AuthenticationMiddleware<THandler, TOptions>).FullName,
                 Options.AuthenticationType
             };
 
@@ -49,7 +50,7 @@
             Options.StateDataHandler = new ExtraDataHandler(dataProtector);
         }
 
-        protected override AuthenticationHandler<OAuth2AuthenticationOptions> CreateHandler()
+        protected override AuthenticationHandler<TOptions> CreateHandler()
         {
             return new THandler { Logger = logger };
         }

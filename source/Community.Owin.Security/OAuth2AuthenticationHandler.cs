@@ -11,17 +11,15 @@
     using Microsoft.Owin.Security;
     using Microsoft.Owin.Security.Infrastructure;
 
-    public abstract class OAuth2AuthenticationHandler :
-        AuthenticationHandler<OAuth2AuthenticationOptions>
+    public abstract class OAuth2AuthenticationHandler<TOptions> :
+        AuthenticationHandler<TOptions> where TOptions: OAuth2AuthenticationOptions
     {
         protected OAuth2AuthenticationHandler(
             string codeEndpoint,
-            string accessTokenEndpoint,
-            string userInfoEndpoint)
+            string accessTokenEndpoint)
         {
             CodeEndpoint = codeEndpoint;
             AccessTokenEndpoint = accessTokenEndpoint;
-            UserInfoEndpoint = userInfoEndpoint;
         }
 
         public ILogger Logger { get; set; }
@@ -30,7 +28,7 @@
 
         protected string AccessTokenEndpoint { get; private set; }
 
-        protected string UserInfoEndpoint { get; private set; }
+        protected abstract string UserInfoEndpoint { get; }
 
         public override async Task<bool> Invoke()
         {
@@ -101,29 +99,42 @@
         protected virtual async Task<OAuth2UserInfo> GetUserInfo(
             string accessToken)
         {
-            var request = CreateWebRequest(
-                UserInfoEndpoint + 
-                "?access_token=" +
-                Uri.EscapeDataString(accessToken));
+            var endpoint = UserInfoEndpoint +
+                (UserInfoEndpoint.Contains("?") ?
+                "&" :
+                "?") +
+                "access_token=" +
+                Uri.EscapeDataString(accessToken);
+
+            var request = CreateWebRequest(endpoint);
 
             request.Accept = "application/json,text/json";
 
-            var response = await request.GetResponseAsync();
-            var responseStream = response.GetResponseStream();
-
-            if (responseStream == null)
+            try
             {
-                return null;
+                var response = await request.GetResponseAsync();
+                var responseStream = response.GetResponseStream();
+
+                if (responseStream == null)
+                {
+                    return null;
+                }
+
+                string content;
+
+                using (var reader = new StreamReader(responseStream))
+                {
+                    content = await reader.ReadToEndAsync();
+                }
+
+                return ParseUserInfo(content);
             }
-
-            string content;
-
-            using (var reader = new StreamReader(responseStream))
+            catch (WebException we)
             {
-                content = await reader.ReadToEndAsync();
-            }
+                var message = GetExceptionContent(we);
 
-            return ParseUserInfo(content);
+                throw new InvalidOperationException(message, we);
+            }
         }
 
         #pragma warning disable 1998
@@ -274,9 +285,26 @@
             var request = (HttpWebRequest)WebRequest.Create(url);
 
             request.ProtocolVersion = HttpVersion.Version11;
+            request.AutomaticDecompression = DecompressionMethods.GZip |
+                DecompressionMethods.Deflate;
             request.UserAgent = "katana community oauth2 client middleware";
 
             return request;
+        }
+
+        private static string GetExceptionContent(WebException e)
+        {
+            var stream = e.Response.GetResponseStream();
+
+            if (stream == null)
+            {
+                return null;
+            }
+
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         private async Task<bool> InvokeReturnPath()
